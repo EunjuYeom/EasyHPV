@@ -42,12 +42,12 @@ def mapping(file1, file2, name, ref, threads, path):
     cmd8 = f"samtools index {name}_sorted_dedup.bam"
     cmd9 = f"samtools flagstat {name}_sorted_dedup.bam > {name}_flagstat.txt" 
     
-    #os.system(cmd4)
-    #os.system(cmd5)
-    #os.system(cmd6)
-    #os.system(cmd7)
-    #os.system(cmd8)
-    #os.system(cmd9)
+    os.system(cmd4)
+    os.system(cmd5)
+    os.system(cmd6)
+    os.system(cmd7)
+    os.system(cmd8)
+    os.system(cmd9)
     
 #----------------------------------------------------------------------------------------#
 def genotyping(file1, file2, name, HPV_ref, kraken2_dir, threads, path): 
