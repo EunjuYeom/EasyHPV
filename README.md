@@ -1,6 +1,17 @@
 # EasyHPV
 EasyHPV is a pipeline detecting HPV genotypes and human genome integration breakpoints. 
 
+## Installation
+Install EasyHPV codes and files with following code
+
+`git clone https://github.com/EunjuYeom/EasyHPV.git`
+
+then, install required tools using environment.yaml file
+
+`conda env update --file environment.yaml`
+
+If you are not using conda, install the following tools manually. 
+*Kraken2 is required to be manually installed even when using conda environment.
 ### Requirements
 Kraken2 
 
@@ -18,7 +29,7 @@ pyranges
 
 pysam
 
-### Steps
+## Pipeline steps
 1. Map fastq file to human reference
 2. Map fastq file to HPVs using Kraken
 3. Generate HPV genotype result file 
