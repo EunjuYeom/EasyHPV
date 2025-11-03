@@ -302,9 +302,5 @@ if __name__ == '__main__' :
     else :
         run(args.R1, args.R2, args.output, args.ref, args.hpv_reference, args.kraken2_directory, args.threads, args.annotation_bed, path)
         
-#python3 /labmed/99.YEJ/EasyHPV/easyhpv.py -r1 
-
-#samtools, bwa, picard, pandas, python, pyranges, pysam
-#conda install bioconda::pysam
 
 
