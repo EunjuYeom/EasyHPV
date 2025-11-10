@@ -13,9 +13,9 @@ then, install required tools using environment.yaml file
 If you are not using conda, install the following tools manually. 
 *Kraken2 is required to be manually installed even when using conda environment.
 ### Requirements
-[Kraken2](https://github.com/DerrickWood/kraken2)
+[kraken2](https://github.com/DerrickWood/kraken2)
 
-[Samtools](https://github.com/samtools/samtools)
+[samtools](https://github.com/samtools/samtools)
 
 [bwa](https://github.com/lh3/bwa)
 
