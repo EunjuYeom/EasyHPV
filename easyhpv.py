@@ -159,23 +159,15 @@ def integration(file1, file2, name, HPV_ref, annot_bed, path):
         read_info=line.split()[1]
         read_list.add(read_info)
     
-    output_lines = []
-    BUFFER_SIZE = 10000
+    
     
     with pysam.AlignmentFile(f"{name}_sorted_dedup.bam", "rb") as bam_file, open(f"{name}_int_reads.txt", "w") as out_file:
       for read in bam_file :
         if read.query_name in read_list : 
           chromo = read.reference_name
           if chromo in included_chromo :
-            output_lines.append(read.to_string())
-      
-        if len(output_lines) >= BUFFER_SIZE :
-          out_file.write("\n".join(output_lines)+"\n")
-          output_lines.clear()
-    
-      if output_lines : 
-        out_file.write("\n".join(output_lines)+"\n")
-           
+            out_file.write(read.to_string()+"\n")
+                 
       
     
     #add kmer 
@@ -209,7 +201,7 @@ def integration(file1, file2, name, HPV_ref, annot_bed, path):
     merged_df.to_csv(f"{name}_results.txt", sep="\t", index=False, header=None)
     
     
-    #add_num_reads(name):
+    #add_num_reads
     df_4=pd.read_csv(f"{name}_results.txt", sep="\t", header = None, names=["read", "chr", "pos", "CIGAR","MAPQ", "HPV", "F_supporting_kmer", "R_supporting_kmer"])
     
     read_counts = df_4["read"].value_counts().rename("num_of_reads")
@@ -217,19 +209,20 @@ def integration(file1, file2, name, HPV_ref, annot_bed, path):
     df_5 = df_4.merge(read_counts, left_on = "read", right_index = True)
     
     df_5.to_csv(f"{name}_results_read_count.txt", sep = "\t", index = False, header = False)
-  
+    
+    
     #true_false
     cmd15 = f"Rscript {easyhpv_path}/easyhpv_int.R -n {name}"
     os.system(cmd15)
     
     #annotation 
     
-    df_6 = pd.read_csv(f"{name}_result_true_filtered_50M.txt", sep="\t",dtype= {"read" : str, "chr":"category","pos": int, "CIGAR": str, "MAPQ": int, "HPV": "category", "F_supporting_kmer":int,"R_supporting_kmer" : int, "num_of_reads":int, "T/F" : "category"})
+    df_6 = pd.read_csv(f"{name}_result_true_filtered_50M.txt", sep="\t",dtype= {"read" : str, "chr":"category","pos": int, "CIGAR": str, "MAPQ": int, "HPV": "category", "F_supporting_kmer":int,"R_supporting_kmer" : int, "num_of_reads":int, "T/F" : "category", "breakpoint":int})
     
     annot_ref = pd.read_csv(f"{annot_bed}", sep="\t", dtype ={"chr":"category", "start":int, "end":int, "NM":str,"gene":"category", "type":"category", "strand":"category", "exon_num":"category"})
     
-    df_6["Start"] = df_6["pos"]
-    df_6["End"] = df_6["pos"]+1
+    df_6["Start"] = df_6["breakpoint"]
+    df_6["End"] = df_6["breakpoint"]+1
     pr_df = pr.PyRanges(df_6.rename(columns={"chr":"Chromosome"}))
     
     annot_ref=annot_ref.rename(columns={"chr" : "Chromosome", "start" : "Start", "end" : "End"})
@@ -302,5 +295,6 @@ if __name__ == '__main__' :
     else :
         run(args.R1, args.R2, args.output, args.ref, args.hpv_reference, args.kraken2_directory, args.threads, args.annotation_bed, path)
         
+
 
 
