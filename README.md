@@ -11,15 +11,16 @@ then, install required tools using environment.yaml file
 `conda env update --file environment.yaml`
 
 If you are not using conda, install the following tools manually. 
+
 *Kraken2 is required to be manually installed even when using conda environment.
 ### Requirements
-Kraken2 
+[kraken2](https://github.com/DerrickWood/kraken2)
 
-Samtools
+[samtools](https://github.com/samtools/samtools)
 
-bwa
+[bwa](https://github.com/lh3/bwa)
 
-picard
+[picard](https://github.com/broadinstitute/picard)
 
 pandas
 
@@ -29,7 +30,10 @@ pyranges
 
 pysam
 
-## Pipeline steps
+## Pipeline workflow
+<img width="988" height="220" alt="image" src="https://github.com/user-attachments/assets/a4095d00-2cea-4071-bd06-49107f620232" />
+
+
 1. Map fastq file to human reference
 2. Map fastq file to HPVs using Kraken
 3. Generate HPV genotype result file 
@@ -40,17 +44,17 @@ pysam
 ## Options
 | Options | Description |
 |---------|-------------|
-|-r1, --R1|Read 1 fastq file|
-|-r2, --R2|Read 2 fastq file|
+|-r1, --R1|Read 1 fastq file (must be gzipped)|
+|-r2, --R2|Read 2 fastq file (must be gzipped)|
 |-o, --output|Output name|
 |-r, --reference|Human reference fasta file|
 |-hr, --hpv-reference|HPV reference fasta file directory|
 |-k, --kraken2-directory|Kraken2 tool directory|
 |-b, --bed_file|Bed file for annotation|
 |-t, --threads|Threads|
-|-m, --mapping-only|If only mapping to human reference step `-m y`|
-|-g, --genotyping-only|If only genotyping by Kraken2 step `-g y`|
-|-i, --integration-only|If only integration step `-i y`|
+|-m, --mapping-only|If only mapping to human reference step `-m y` (default: n)|
+|-g, --genotyping-only|If only genotyping by Kraken2 step `-g y` (default: n)|
+|-i, --integration-only|If only integration step `-i y` (default: n)|
 
 
 ### Example Run Code
