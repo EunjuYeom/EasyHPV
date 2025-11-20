@@ -217,54 +217,54 @@ def integration(file1, file2, name, HPV_ref, annot_bed, path):
     
     #annotation 
     
-    df_6 = pd.read_csv(f"{name}_result_true_filtered_50M.txt", sep="\t",dtype= {"read" : str, "chr":"category","pos": int, "CIGAR": str, "MAPQ": int, "HPV": "category", "F_supporting_kmer":int,"R_supporting_kmer" : int, "num_of_reads":int, "T/F" : "category", "breakpoint":int})
-    
-    annot_ref = pd.read_csv(f"{annot_bed}", sep="\t", dtype ={"chr":"category", "start":int, "end":int, "NM":str,"gene":"category", "type":"category", "strand":"category", "exon_num":"category"})
-    
-    df_6["Start"] = df_6["breakpoint"]
-    df_6["End"] = df_6["breakpoint"]+1
-    pr_df = pr.PyRanges(df_6.rename(columns={"chr":"Chromosome"}))
-    
-    annot_ref=annot_ref.rename(columns={"chr" : "Chromosome", "start" : "Start", "end" : "End"})
-    pr_annot = pr.PyRanges(annot_ref)
-    
-    joined=pr_df.join(pr_annot)    
-    joined_df = joined.df
-    
-    if joined_df.empty : 
-      with open(f"{name}_no_intergenic_region.txt") as no_intergenic:
-        no_intergenic.write(f"{name} has no HPV intergenic region")
-      return 
-    
-    else : 
-      joined_df["Position"] = joined_df["Chromosome"].astype(str)+":"+joined_df["Start"].astype(str)
-      
-      joined_final = joined_df[["read", "Position", "HPV", "CIGAR","MAPQ", "gene", "exon_num", "F_supporting_kmer", "R_supporting_kmer", "type"]]
-      
-      final_df = joined_final.groupby(["read", "Position","HPV","gene","exon_num"])
-      
-      final_result=[]
-      
-      for key, group in final_df :
-        combined_type = ",".join(sorted(set(group["type"])))
-        
-        row = group.iloc[0][["read", "Position", "HPV", "CIGAR", "MAPQ", "gene", "exon_num", "F_supporting_kmer", "R_supporting_kmer"]].to_dict()
-        
-        row["type"]=combined_type
-        final_result.append(row)
-        
-        
-      final_annot_df = pd.DataFrame(final_result)
-      final_annot_df = final_annot_df.sort_values(by = "Position", ascending = True).reset_index(drop=True) 
-      final_annot_df.to_csv(f"{name}_result_true_filtered_annot_50M.txt", sep = "\t", index = False, header = True)
-    
-    #stat
-    cmd16 = f"Rscript {easyhpv_path}/easyhpv_stat_test.R -n {name}"
-    
-    if os.file.exists(f"{name}_no_intergenic_region.txt"): 
+    if os.path.isfile(f"{name}_no_intergenic_region.txt"):
       pass
-    else : 
-      os.system(cmd16) 
+    
+    else: 
+      df_6 = pd.read_csv(f"{name}_result_true_filtered_50M.txt", sep="\t",dtype= {"read" : str, "chr":"category","pos": int, "CIGAR": str, "MAPQ": int, "HPV": "category", "F_supporting_kmer":int,"R_supporting_kmer" : int, "num_of_reads":int, "T/F" : "category", "breakpoint":int})
+      
+      annot_ref = pd.read_csv(f"{annot_bed}", sep="\t", dtype ={"chr":"category", "start":int, "end":int, "NM":str,"gene":"category", "type":"category", "strand":"category", "exon_num":"category"})
+      
+      df_6["Start"] = df_6["breakpoint"]
+      df_6["End"] = df_6["breakpoint"]+1
+      pr_df = pr.PyRanges(df_6.rename(columns={"chr":"Chromosome"}))
+      
+      annot_ref=annot_ref.rename(columns={"chr" : "Chromosome", "start" : "Start", "end" : "End"})
+      pr_annot = pr.PyRanges(annot_ref)
+      
+      joined=pr_df.join(pr_annot)    
+      joined_df = joined.df
+      
+      if joined_df.empty : 
+        with open(f"{name}_no_intergenic_region.txt") as no_intergenic:
+          no_intergenic.write(f"{name} has no HPV intergenic region")
+        return 
+      
+      else : 
+        joined_df["Position"] = joined_df["Chromosome"].astype(str)+":"+joined_df["Start"].astype(str)
+        
+        joined_final = joined_df[["read", "Position", "HPV", "CIGAR","MAPQ", "gene", "exon_num", "F_supporting_kmer", "R_supporting_kmer", "type"]]
+        
+        final_df = joined_final.groupby(["read", "Position","HPV","gene","exon_num"])
+        
+        final_result=[]
+        
+        for key, group in final_df :
+          combined_type = ",".join(sorted(set(group["type"])))
+          
+          row = group.iloc[0][["read", "Position", "HPV", "CIGAR", "MAPQ", "gene", "exon_num", "F_supporting_kmer", "R_supporting_kmer"]].to_dict()
+          
+          row["type"]=combined_type
+          final_result.append(row)
+          
+          
+        final_annot_df = pd.DataFrame(final_result)
+        final_annot_df = final_annot_df.sort_values(by = "Position", ascending = True).reset_index(drop=True) 
+        final_annot_df.to_csv(f"{name}_result_true_filtered_annot_50M.txt", sep = "\t", index = False, header = True)
+    
+        #stat
+        cmd16 = f"Rscript {easyhpv_path}/easyhpv_stat_test.R -n {name}"
+        os.system(cmd16) 
 
 def run(file1, file2, name, ref, HPV_ref, kraken2_dir, threads, annot_bed, path):
     
